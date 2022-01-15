@@ -49,13 +49,15 @@ delbtn = st.button('Decrement', on_click=decrement_counter)
 # if btn:
 #     print(st.session_state.count)
     # col1.empty()
+var_col1 = {}
+var_col2 = {}
 with col1:
     for num in range(st.session_state.count):
-        globals()[f'data{num+1}'] = st.text_input(f'수집항목{num+1}')
+        var_col1[f'data{num+1}'] = st.text_input(f'수집항목{num+1}')
         
 with col2:
     for num in range(st.session_state.count):
-        globals()[f'selector{num+1}'] = st.text_input(f'선택자{num+1}')              
+        var_col2[f'selector{num+1}'] = st.text_input(f'선택자{num+1}')           
 
 df = pd.DataFrame(columns = ['목적', '분류코드', '수집항목1', '선택자1'], index=None)
 
@@ -64,7 +66,7 @@ df = pd.DataFrame(columns = ['목적', '분류코드', '수집항목1', '선택�
 if 'df' not in st.session_state:
     st.session_state['df'] = df
     
-print(data3)
+print(var_col1['data3'])
 if st.button("Append"):
     raw_data = {
             '목적' : f'{site}',
@@ -72,8 +74,7 @@ if st.button("Append"):
             }
     
     for num in range(st.session_state.count):
-        num
-        raw_data.update({f'수집항목{num}' : f'data{num}', f'선택자{num}' : f'selector{num}'})
+        raw_data.update({f'수집항목{num+1}' : var_col1[f'data{num+1}'], f'선택자{num+1}' : var_col2[f'selector{num+1}']})
            
             
        
