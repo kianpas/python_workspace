@@ -1,4 +1,5 @@
 import time
+from turtle import clear, onclick
 from urllib.parse import parse_qs, urlparse
 
 import json
@@ -15,59 +16,69 @@ import pandas as pd
 # 제목
 st.title("메인 화면")
 
-        
+
+# 컨테이너
 with st.container():
+    # 컬럼 2개 생성
     col1, col2= st.columns(2)
 
+    # 컬럼1
     with col1:
         st.header("수집항목1")
-        site = st.text_input("목적")
-        # data3 = st.text_input("수집항목1")
+        site = st.text_input("목적", key="site")
+        
+    # 컬럼2
     with col2:
         st.header("수집항목명2")
-        code = st.text_input("분류코드")
-        # data4 = st.text_input("선택자")
+        code = st.text_input("분류코드", key="code")
 
-# number = st.number_input('Insert a number', step=1,)
-
-
-
+# 인풋을 위한 카운트 세션에 생성
 if 'count' not in st.session_state:
 	st.session_state.count = 0
 
 def increment_counter():
 	st.session_state.count += 1
- 
+
 def decrement_counter():
 	st.session_state.count -= 1
 
+
 btn = st.button('Increment', on_click=increment_counter)
 delbtn = st.button('Decrement', on_click=decrement_counter)
-# if delbtn:
-#     print(st.session_state.count)
 
-# if btn:
-#     print(st.session_state.count)
-    # col1.empty()
 var_col1 = {}
 var_col2 = {}
+
 with col1:
     for num in range(st.session_state.count):
-        var_col1[f'data{num+1}'] = st.text_input(f'수집항목{num+1}')
+        var_col1[f'data{num+1}'] = st.text_input(f'수집항목{num+1}', key=f'data{num+1}')
         
 with col2:
     for num in range(st.session_state.count):
-        var_col2[f'selector{num+1}'] = st.text_input(f'선택자{num+1}')           
+        var_col2[f'selector{num+1}'] = st.text_input(f'선택자{num+1}', key=f'selector{num+1}')           
 
 df = pd.DataFrame(columns = ['목적', '분류코드', '수집항목1', '선택자1'], index=None)
+
+# 저장 후 인풋 리셋
 
 
 # st.dataframe(df)
 if 'df' not in st.session_state:
     st.session_state['df'] = df
-    
-print(var_col1['data3'])
-if st.button("Append"):
+
+def clear_form():
+    st.session_state["code"] = ''
+    st.session_state["site"] = ''
+    for num in range(st.session_state.count):
+        st.session_state[f"data{num+1}"] = ''
+        st.session_state[f"selector{num+1}"] = ''
+
+with col1:
+    append = st.button("Append")
+with col2:
+    reset = st.button("초기화", on_click=clear_form)
+
+if append:
     raw_data = {
             '목적' : f'{site}',
             '분류코드' : f'{code}'
@@ -75,19 +86,19 @@ if st.button("Append"):
     
     for num in range(st.session_state.count):
         raw_data.update({f'수집항목{num+1}' : var_col1[f'data{num+1}'], f'선택자{num+1}' : var_col2[f'selector{num+1}']})
-           
-            
-       
+
     st.session_state.df = st.session_state.df.append(raw_data, ignore_index=True)
-    
+
+
+
 st.dataframe(st.session_state.df)
 data = st.session_state.df
 options = data['분류코드']
 choice = st.selectbox('데이터선택', options)
 condition = (data['분류코드'] == choice)
 cond_result = data[condition]
-# if cond_result['수집항목1'].item():
-#     print(cond_result['수집항목1'].item())
+
+# print(cond_result['수집항목1'].item())
        
 
 if st.button("csv파일로 저장?"):
