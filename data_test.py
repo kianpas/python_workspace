@@ -133,27 +133,27 @@ def app():
             mime="text/csv",
         )
 
-    add= st.button("엑셀에 데이터 추가")
+    
     
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
+        add= st.button("엑셀에 데이터 추가")
         dataframe = pd.read_csv(uploaded_file)
-        
+        st.write(dataframe)
         if add:
             print(st.session_state.df)
             temp = st.session_state.df
-            
-            # print(temp["목적"].item(), temp["일련번호"].item())
-            df_2 = pd.DataFrame({'목적': temp.get("목적").values[0], 
-                                 '분류코드': temp.get("분류코드").values[0],
-                                 '수집항목1' : temp.get("수집항목1").values[0],
-                                 '선택자1' : temp.get("선택자1").values[0],
-                                 })
-            merge = dataframe.append(df_2, ignore_index=True)
+
+            dd = temp.astype({'분류코드':'int64'}, copy=False)
+
+           
+            merge = pd.concat([dataframe, dd], ignore_index=True)
+            # foo = merge.dtypes.astype(str)
+              
             st.write(merge)
         
-        st.write(dataframe)
-        print(dataframe)
+        print(merge)
+
         
         # 업로드 방식 사용시에도 사용 가능
         # print(dataframe['분류코드'])
