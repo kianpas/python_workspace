@@ -14,6 +14,28 @@ import json
 import streamlit as st
 import pandas as pd
 
+
+if "count" not in st.session_state:
+    st.session_state.count = 0
+
+    # 카운트 증가
+def increment_counter():
+    st.session_state.count += 1
+
+
+    # 카운트 감소
+def decrement_counter():
+    st.session_state.count -= 1
+
+
+    # 초기화 함수
+def clear_form():
+    st.session_state["code"] = ""
+    st.session_state["site"] = ""
+    for num in range(st.session_state.count):
+        st.session_state[f"data{num+1}"] = ""
+        st.session_state[f"selector{num+1}"] = ""
+
 def app():
     # 제목
     st.title("데이터 수집")
@@ -34,17 +56,7 @@ def app():
             code = st.text_input("분류코드", key="code")
 
     # 인풋을 위한 카운트 세션에 생성
-    if "count" not in st.session_state:
-        st.session_state.count = 0
 
-    # 카운트 증가
-    def increment_counter():
-        st.session_state.count += 1
-
-
-    # 카운트 감소
-    def decrement_counter():
-        st.session_state.count -= 1
 
 
     
@@ -80,13 +92,6 @@ def app():
     if "df" not in st.session_state:
         st.session_state["df"] = df
 
-    # 초기화 함수
-    def clear_form():
-        st.session_state["code"] = ""
-        st.session_state["site"] = ""
-        for num in range(st.session_state.count):
-            st.session_state[f"data{num+1}"] = ""
-            st.session_state[f"selector{num+1}"] = ""
 
 
     # 추가, 초기화 버튼
@@ -152,16 +157,7 @@ def app():
               
             st.write(merge)
         
-        print(merge)
-
-        
-        # 업로드 방식 사용시에도 사용 가능
-        # print(dataframe['분류코드'])
-        # options = dataframe["분류코드"]
-        # choice = st.selectbox("데이터선택", options)
-        # condition = dataframe["분류코드"] == choice
-        # cond_result = dataframe[condition]
-        # print(cond_result["수집항목1"].item())
+      
 
     xlxs_dir = "sample.xlsx"
 
