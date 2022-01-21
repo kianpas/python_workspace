@@ -17,5 +17,5 @@ class MultiApp:
             self.apps,
             format_func=lambda app: app['title']
         )
-        
+        # app안에 function 실행
         app["function"]()

@@ -9,7 +9,8 @@ import json
 def app():
      # 셀렉트박스에 표현하기 위해 df 가져옴
     data = st.session_state.df
-    if not data.empty:
+    # data에 하나의 행이 존재할 경우
+    if len(data) > 0:
         # 저장된 데이터의 분류코드만 가져와서 options으로 저장
         options = data["분류코드"]
         # options를 스트리밋 셀렉트박스로 사용
@@ -129,5 +130,7 @@ def app():
                 st.text_input("수집결과데이터", value=json_string)
                 
                 
-            if collect_btn and purpose == "자치법규":
-                st.write("자치법규 준비중")
+            # if collect_btn and purpose == "자치법규":
+            #     st.write("자치법규 준비중")
+    else:
+        st.write("데이터 없음")    
