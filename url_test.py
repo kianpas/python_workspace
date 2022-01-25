@@ -1,27 +1,32 @@
 import streamlit as st
 import requests
 import time
+import os.path
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs, urlparse
+import pandas as pd
 
 import json
 
 def app():
      # 셀렉트박스에 표현하기 위해 df 가져옴
-    data = st.session_state.df
+    df = st.session_state.df
+    data = pd.read_excel("output.xlsx") if os.path.exists("output.xlsx") else df
+    data = data.astype({"분류코드": "int64"}, copy=False)
     # data에 하나의 행이 존재할 경우
     if len(data) > 0:
         # 저장된 데이터의 분류코드만 가져와서 options으로 저장
         options = data["분류코드"]
-        # options를 스트리밋 셀렉트박스로 사용
+        # 분류코드 options를 스트리밋 셀렉트박스로 사용
         choice = st.selectbox("데이터선택", options)
-        # 선택한 값과 데이터의 분류코드 일치한 조건 저장
+        # 선택한 값과 데이터의 분류코드 일치한 값을 condition에 저장
         condition = data["분류코드"] == choice
+        # 조건에 따른 결과 가져옴
         cond_result = data[condition]
         
         col1, col2 = st.columns(2)
         
-        purpose = f"{cond_result['목적'].item()}"
+        purpose = cond_result['목적'].item()
         
         with col1:
             st.text_input("목적", value=purpose)
@@ -42,6 +47,7 @@ def app():
             
             collect_btn = st.button("수집")
             
+          
             if collect_btn and purpose == "법령":
             
                 headers = {
@@ -133,4 +139,8 @@ def app():
             # if collect_btn and purpose == "자치법규":
             #     st.write("자치법규 준비중")
     else:
-        st.write("데이터 없음")    
+        st.write("데이터 없음")
+        
+        
+        
+            
