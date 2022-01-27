@@ -1,8 +1,8 @@
 import time
-import os.path
 from turtle import clear, onclick
 from urllib.parse import parse_qs, urlparse
 
+import os.path
 import json
 
 # import requests
@@ -79,9 +79,6 @@ def reset_data():
 
 def app():
 
-   
-    
-
     # 제목
     st.title("데이터 수집")
 
@@ -122,11 +119,9 @@ def app():
         st.session_state["df"] = df
         
      # 시작과 함께 지정된 엑셀파일 읽기
-    # 파일 존재 여부 판단
     excel_read = pd.read_excel("output.xlsx") if os.path.exists("output.xlsx") else df
     excel_read = excel_read.astype({"분류코드": "int64"}, copy=False)
-    # print(excel_read)
-    # st.session_state.df = excel_read    
+    
 
     # 추가, 초기화 버튼
     with col1:
@@ -141,19 +136,19 @@ def app():
 
         # 카운트 수에 따른 초기 데이터 업데이트
         raw_data_result = loop_def("raw_data", raw_data)
-       
+
         # 세션의 df에 추가
         st.session_state.df = st.session_state.df.append(
             raw_data_result, ignore_index=True
         )
-        
+
         # 컬럼 순서 정하는 코드
         col_name = ["목적", "분류코드"]
         set_col_name = loop_def("col_name", col_name)
 
         # 세션에 순서정리된 df 다시 저장
         st.session_state.df = st.session_state.df[set_col_name]
-        
+
     # 스트리밋 데이터 형식으로 표시
     st.dataframe(st.session_state.df)
     st.button("입력한 데이터 초기화", on_click=reset_data)
@@ -171,19 +166,20 @@ def app():
     #     st.write(dataframe)
     if add:
         temp = st.session_state.df
+
         # 엑셀의 분류코드 문자열에서 int로 변경
         add_data = temp.astype({"분류코드": "int64"}, copy=False)
         # 엑셀에서 불러온 데이터와 입력한 데이터 합침
         merge = pd.concat([excel_read, add_data], ignore_index=True)
         st.session_state.df = merge
-        print(merge)
+        st.write(merge)
 
         # merge_csv = merge.to_csv(index=False).encode("utf-8-sig")
         # merge_download = download_btn("Download Merge Data", merge_csv)
         # panda_down =
         # 합쳐진 데이터 정해진 엑셀파일로 추출, 덮어쓰기 처리
         merge.to_excel("output.xlsx", index=False)
-        st.write(st.session_state.df)
+
 
 # 다운로드 버튼 함수
 def download_btn(label, data):
